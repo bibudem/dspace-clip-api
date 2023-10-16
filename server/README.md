@@ -8,7 +8,7 @@ La description de chaque configuration se trouve en commentaires dans les fichie
 
 # Instructions pour Exécuter le Fichier Flow
 
-Ce fichier `flow.yml` contient les configurations pour le flux de travail. Voici les étapes pour l'exécuter :
+Ce fichier `clip_flow.yml` contient les configurations pour le flux de travail. Voici les étapes pour l'exécuter :
 
 1. **Installer les Dépendances**
 
@@ -31,4 +31,4 @@ Une fois le flux exécuté avec succès, le serveur sera accessible via différe
 
 Par exemple, pour accéder au serveur gRPC, utilisez l'URL : `grpc://localhost:51000`.
 
-N'hésitez pas à explorer le contenu du fichier `flow.yaml` pour plus de détails sur les configurations spécifiques.
+N'hésitez pas à explorer le contenu du fichier `clip_flow.yml` pour plus de détails sur les configurations spécifiques.
