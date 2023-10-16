@@ -6,7 +6,7 @@ La description de chaque configuration se trouve en commentaires dans les fichie
 
 ## Pour exécuter un serveur
 
-# Instructions pour Exécuter le Fichier Flow
+### Instructions pour Exécuter le Fichier Flow
 
 Ce fichier `clip_flow.yml` contient les configurations pour le flux de travail. Voici les étapes pour l'exécuter :
 
@@ -22,7 +22,8 @@ Assurez-vous d'installer les dépendances nécessaires en exécutant les command
 
 Utilisez la commande suivante pour exécuter le fichier flow et démarer clip-as-service:
 
-python -m clip_server flow.yml
+      cd server
+      python -m clip_server clip_flow.yml
 
 
 3. **Accès au Serveur**
