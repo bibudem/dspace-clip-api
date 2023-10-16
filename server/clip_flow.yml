@@ -2,8 +2,8 @@ jtype: Flow
 version: '1'
 
 gateway: # Configuration du point d'entrée.
-  protocol: [grpc, http, websocket] # Protocoles supportés : gRPC, HTTP, WebSocket.
-  port: [51000, 54322, 54323] # Ports associés à chaque protocole.
+  protocol: [grpc, http, websocket]
+  port: [51000, 54322, 54323]
 
 executors:
   - name: encoder # Premier exécuteur nommé "encoder".
@@ -16,7 +16,7 @@ executors:
   - name: indexer # Deuxième exécuteur nommé "indexer".
     uses:
       jtype: AnnLiteIndexer # Type de l'exécuteur : AnnLiteIndexer.
-      with: # Paramètres spécifiques à l'exécuteur.
+      with:
         n_dim: 512 # Dimension de l'espace vectoriel.
         metric: cosine # Métrique de similarité : cosinus.
         include_metadata: true # Inclure les métadonnées.

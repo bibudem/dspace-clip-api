@@ -1,18 +1,32 @@
-# dspace-clip-api / Dossier utils
+# Projet CLIP pour DSpace
 
-Ce dossier contient des utilitaires pour tester les outils et l'API.
+Ce projet vise à intégrer une API permettant d'ajouter de la recherche sémantique d'images à DSpace en utilisant le modèle CLIP.
+* La version Python utilisé est 3.10.10
+## Installation
 
-## Description des utilitaires
+1. Installer les composants :
+```
+pip install clip-client
+```
 
-### Indexer des images
+2. La structure de ce dossier pourrait être la suivante :
+    - /server/search_flow.yml
+    - /utils/search_clip.py
+    - /utils/images-indexation.py
+    - /workspace
+    
+   
+### Description des utilitaires
+
+# Indexer des images
 
 ---
 
-# Script d'Indexation pour CLIP
+## Script d'Indexation pour CLIP
 
 Le script `indexation_clip.py` permet d'indexer des images en utilisant le modèle CLIP. Il se connecte au serveur CLIP et traite les images d'un dossier spécifié, en ajoutant des métadonnées telles que le nom de collection et le nom de fichier. Une fois l'indexation terminée, il affiche le nombre total de fichiers indexés et le temps d'exécution.
-
-Exemple de sortie :
+* N'oubliez pas de créer le dossier "workspace" (dans le repertoire indiqué dans le fichier clip_server.yml) pour stocker les résultats de l'indexation des images.
+* Exemple de sortie :
 
 ```
 Indexation terminée pour 100 fichiers.
@@ -22,6 +36,7 @@ Temps d'exécution : 12.3781156539917 secondes
 Utilisation :
 
 ```bash
+cd utils
 python indexation_clip.py
 ```
 
@@ -34,7 +49,7 @@ Lors de l'exécution, vous serez invité à entrer le chemin du dossier contenan
 
 ---
 
-# Script de Recherche avec CLIP
+## Script de Recherche avec CLIP
 
 Le script `search_clip.py` permet d'effectuer une recherche sémantique d'images en utilisant le modèle CLIP. L'utilisateur peut saisir un mot-clé de recherche ou le chemin d'une image pour lancer la recherche. De plus, l'utilisateur peut spécifier une collection particulière pour la recherche ou laisser le champ vide pour effectuer une recherche globale.
 
@@ -74,6 +89,7 @@ Score : 0.7538365721702576
 Utilisation :
 
 ```bash
+cd utils
 python search_clip.py
 ```
 
