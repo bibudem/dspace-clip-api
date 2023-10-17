@@ -1,99 +1,95 @@
-# Projet CLIP pour DSpace
+# dspace-clip-api / Dossier utils
 
-Ce projet vise à intégrer une API permettant d'ajouter de la recherche sémantique d'images à DSpace en utilisant le modèle CLIP.
-* La version Python utilisé est 3.10.10
-## Installation
+Ce dossier contient des outils et des exemples pour travailler avec le se serveur ou l'API.
 
-1. Installer les composants :
-```
+Pour utiliser les scripts Python, vous devez installer le module clip-client de Jina:
+
+```sh
 pip install clip-client
 ```
 
-2. La structure de ce dossier pourrait être la suivante :
-    - /server/search_flow.yml
-    - /utils/search_clip.py
-    - /utils/images-indexation.py
-    - /workspace
-    
-   
-### Description des utilitaires
+## Indexer des images
 
-# Indexer des images
+Le script `indexation_clip.py` permet d'*indexer* des images, c'est-à-dire d'en extraire les *features* selon le modèle CLIP et d'indexer le vecteur de *features* dans un moteur de recherche vectoriel (*Ann Lite*).
 
----
+Pour l'utiliser, assurez-vous d'avoir un [serveur](../server/README.md) démarré et vérifiez que le port et le protocole utilisés correspondant à ce qu'on retrouve dans le script `indexation_clip.py`.
 
-## Script d'Indexation pour CLIP
+La ligne de commande est la suivante:
 
-Le script `indexation_clip.py` permet d'indexer des images en utilisant le modèle CLIP. Il se connecte au serveur CLIP et traite les images d'un dossier spécifié, en ajoutant des métadonnées telles que le nom de collection et le nom de fichier. Une fois l'indexation terminée, il affiche le nombre total de fichiers indexés et le temps d'exécution.
-* N'oubliez pas de créer le dossier "workspace" (dans le repertoire indiqué dans le fichier clip_server.yml) pour stocker les résultats de l'indexation des images.
-* Exemple de sortie :
-
-```
-Indexation terminée pour 100 fichiers.
-Temps d'exécution : 12.3781156539917 secondes
+```sh
+python indexation_clip.py [dossier d'images] optionnel: non d'une collection]
 ```
 
-Utilisation :
+Les fichiers d'images qui sont dans le dossier spécifié seront indexés sur le serveur.
 
-```bash
-cd utils
-python indexation_clip.py
+Optionnellement, si vous spécifiez une collection, celle-ci sera ajoutée comme métadonnée aux images et vous pourrez filtrer vos recherches par collection.
+
+Vous pouvez par exemple exécuter:
+
+```sh
+python indexation_clip.py img test
 ```
 
-Lors de l'exécution, vous serez invité à entrer le chemin du dossier contenant les images à indexer, ainsi que le nom de la collection à laquelle elles appartiennent.
+Ceci indexera les 10 images du dossier `img` dans une collection nommée `test`.
 
----
+Le résultat devrait ressembler à ceci:
 
-
-### Recherche du texte ou des images
-
----
-
-## Script de Recherche avec CLIP
-
-Le script `search_clip.py` permet d'effectuer une recherche sémantique d'images en utilisant le modèle CLIP. L'utilisateur peut saisir un mot-clé de recherche ou le chemin d'une image pour lancer la recherche. De plus, l'utilisateur peut spécifier une collection particulière pour la recherche ou laisser le champ vide pour effectuer une recherche globale.
-
-Exemple de sortie :
-
+```sh
+  ⬇ Progress ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 • unknown • 0:00:00 • 2.4 kB
+  ⬇ Progress ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 • unknown • 0:00:00 • 2.4 kB
+  ⬇ Progress ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 • unknown • 0:00:00 • 2.4 kB
+  ⬇ Progress ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 • unknown • 0:00:00 • 2.4 kB
+  ⬇ Progress ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 • unknown • 0:00:00 • 2.4 kB
+  ⬇ Progress ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 • unknown • 0:00:00 • 2.4 kB
+  ⬇ Progress ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 • unknown • 0:00:00 • 2.4 kB
+  ⬇ Progress ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 • unknown • 0:00:00 • 2.4 kB
+  ⬇ Progress ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 • unknown • 0:00:00 • 2.4 kB
+  ⬇ Progress ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 • unknown • 0:00:00 • 2.4 kB
+Indexation terminée pour 10 fichiers.
+Temps d'exécution : 36.17978024482727 secondes
 ```
-python search_clip.py
-Entrez le mot-clé de recherche ou le chemin de l'image pour la recherche: maison
-Entrez le nom de la collection pour la recherche spécifique sinon Enter : test
 
-Id : 7fade30656ad466f2d747506083a5fed
-Nom de l'image : _madeleine_275_large.jpg
+## Rechercher des images
+
+Le script `search_clip.py` permet d'effectuer une recherche dans les images indexées.
+
+Pour l'utiliser, assurez-vous d'avoir un [serveur](../server/README.md) démarré et vérifiez que le port et le protocole utilisés correspondant à ce qu'on retrouve dans le script `search_clip.py`.
+
+La ligne de commande est la suivante:
+
+```sh
+python search_clip.py ["Texte ou chemin à rechercher"] [collection]
+```
+
+Vous pouvez soit entrer du texte qui décrit l'image à chercher ou encore entrer le chemin d'une image et des images similaires seront retournées.
+
+Par exemple, pour rechercher une image de chute d'eau dans la collection de test, vous pouvez entrer la commande suivante:
+
+```sh
+python search_clip.py "chute d'eau" test
+```
+
+Le résultat devrait être similaire à ceci:
+
+```sh
+Id : f4f9bd405e7266522e6466a1884c6bda
+File name : IMG_0963.jpeg
 Collection : test
-Score : 0.7509268522262573
-
-Id : 6d8aa6daf1c4269871f556a826cbf0b7
-Nom de l'image : _madeleine_652_large.jpg
+Score : 0.7271528244018555
+Id : 968b5ab4a0934430354d6494b3c4d6ce
+File name : IMG_1106.jpeg
 Collection : test
-Score : 0.7538365721702576
-
-Id : 977fb35c1560868addfa1c970e444425
-Nom de l'image : _madeleine_860_large.jpg
+Score : 0.7361363172531128
+Id : 87b76243572f2b133d6cccf28f2562aa
+File name : IMG_1116.jpeg
 Collection : test
-Score : 0.755467414855957
-
-Id : cde16eca57c458318b105f693fb9e5ac
-Nom de l'image : _madeleine_571_large.jpg
+Score : 0.7632312774658203
+Id : ba1e9cb5512f6eea1ae1adde8a6e34ec
+File name : IMG_0734.jpeg
 Collection : test
-Score : 0.7641065120697021
-
-Id : f2328df0394e6fd6d6a3f839d25b772d
-Nom de l'image : _madeleine_664_large.jpg
+Score : 0.7691144943237305
+Id : e525d955b4281e37da399284828f4f8d
+File name : IMG_2014.jpeg
 Collection : test
-Score : 0.7538365721702576
+Score : 0.7820137739181519
 ```
-
-Utilisation :
-
-```bash
-cd utils
-python search_clip.py
-```
-
-Lors de l'exécution, vous serez invité à entrer un mot-clé de recherche ou le chemin d'une image. Vous pourrez également spécifier une collection pour une recherche plus spécifique.
-
----
-
