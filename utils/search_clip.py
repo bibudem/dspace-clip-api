@@ -1,6 +1,7 @@
 import os
 from clip_client import Client
 from docarray import Document
+import argparse
 
 # Créez un objet Client en spécifiant l'URL du serveur CLIP
 client = Client('grpc://127.0.0.1:51000')
@@ -16,12 +17,16 @@ def search_score(keyword, collection):
     return search_result[0].matches
 
 if __name__ == '__main__':
-    option = input("Entrez le mot-clé de recherche ou le chemin de l'image pour la recherche: ")
+    print("Recherche par mot-clé ou par le chemin de l'image")
+    parser = argparse.ArgumentParser(description='Recherche...')
+    parser.add_argument('--find', type=str, help='Le mot-clé de recherche')
+    parser.add_argument('--collection', type=str, help='Le nom de la collection pour la recherche spécifique')
+    args = parser.parse_args()
 
-    # Demander à l'utilisateur de spécifier une collection
-    collection = input("Entrez le nom de la collection pour la recherche spécifique sinon Enter : ")
+    search_param = args.find
+    collection_name = args.collection
 
-    results = search_score(option, collection)
+    results = search_score(search_param, collection_name)
 
     # Ensemble pour éviter les doublons
     seen_images = set()
