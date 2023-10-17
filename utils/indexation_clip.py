@@ -3,6 +3,7 @@ from clip_client import Client
 from docarray import Document
 import time
 import numpy as np
+import argparse
 
 def index_images_in_folder(client, folder_path,collection_name):
     image_extensions = ['.jpg', '.jpeg', '.png', '.gif']  # Ajoutez les extensions d'images nécessaires
@@ -20,26 +21,31 @@ def index_images_in_folder(client, folder_path,collection_name):
 
 
 if __name__ == '__main__':
-    folder_path = input("Entrez le folder_path: ")
-    collection_name = input("Entrez le nom de collection: ")
+      parser = argparse.ArgumentParser(description='Indexation d\'images avec CLIP')
+      parser.add_argument('--folder', type=str, help='Chemin du dossier contenant les images')
+      parser.add_argument('--collection', type=str, help='Nom de la collection')
+      args = parser.parse_args()
 
-    # Enregistrez le temps de début
-    start_time = time.time()
+      folder_path = args.folder
+      collection_name = args.collection
 
-    # Créez un objet Client en spécifiant l'URL du serveur CLIP
-    client = Client('grpc://127.0.0.1:51000')
+      # Enregistrez le temps de début
+      start_time = time.time()
 
-    # Indexez toutes les images du dossier "files"
-    index_images_in_folder(client, folder_path,collection_name)
+      # Créez un objet Client en spécifiant l'URL du serveur CLIP
+      client = Client('grpc://127.0.0.1:51000')
 
-    # Enregistrez le temps de fin
-    end_time = time.time()
+      # Indexez toutes les images du dossier "files"
+      index_images_in_folder(client, folder_path,collection_name)
 
-    # Calculez la durée d'exécution
-    execution_time = end_time - start_time
+      # Enregistrez le temps de fin
+      end_time = time.time()
 
-    # Affichez la durée d'exécution
-    print(f"Temps d'exécution : {execution_time} secondes")
+      # Calculez la durée d'exécution
+      execution_time = end_time - start_time
+
+      # Affichez la durée d'exécution
+      print(f"Temps d'exécution : {execution_time} secondes")
 
 
 

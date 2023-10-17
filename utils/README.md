@@ -17,7 +17,7 @@ Pour l'utiliser, assurez-vous d'avoir un [serveur](../server/README.md) démarr�
 La ligne de commande est la suivante:
 
 ```sh
-python indexation_clip.py [dossier d'images] optionnel: non d'une collection]
+python indexation_clip.py --folder [dossier d'images] --collection [nom de la collection]
 ```
 
 Les fichiers d'images qui sont dans le dossier spécifié seront indexés sur le serveur.
@@ -27,7 +27,7 @@ Optionnellement, si vous spécifiez une collection, celle-ci sera ajoutée comme
 Vous pouvez par exemple exécuter:
 
 ```sh
-python indexation_clip.py img test
+python indexation_clip.py --folder img  --collection test
 ```
 
 Ceci indexera les 10 images du dossier `img` dans une collection nommée `test`.
@@ -46,7 +46,7 @@ Le résultat devrait ressembler à ceci:
   ⬇ Progress ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 • unknown • 0:00:00 • 2.4 kB
   ⬇ Progress ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 • unknown • 0:00:00 • 2.4 kB
 Indexation terminée pour 10 fichiers.
-Temps d'exécution : 36.17978024482727 secondes
+Temps d'exécution : 7.418843030929565 secondes
 ```
 
 ## Rechercher des images
@@ -58,7 +58,7 @@ Pour l'utiliser, assurez-vous d'avoir un [serveur](../server/README.md) démarr�
 La ligne de commande est la suivante:
 
 ```sh
-python search_clip.py ["Texte ou chemin à rechercher"] [collection]
+python search_clip.py --find ["Texte ou chemin à rechercher"] --collection [collection]
 ```
 
 Vous pouvez soit entrer du texte qui décrit l'image à chercher ou encore entrer le chemin d'une image et des images similaires seront retournées.
@@ -66,30 +66,23 @@ Vous pouvez soit entrer du texte qui décrit l'image à chercher ou encore entre
 Par exemple, pour rechercher une image de chute d'eau dans la collection de test, vous pouvez entrer la commande suivante:
 
 ```sh
-python search_clip.py "chute d'eau" test
+python search_clip.py --find "chute d'eau"  --collection test
 ```
 
 Le résultat devrait être similaire à ceci:
 
 ```sh
-Id : f4f9bd405e7266522e6466a1884c6bda
+Recherche par mot-clé ou par le chemin de l'image
+Id : b9f122135b04eda343ef0fac9e19cc67
 File name : IMG_0963.jpeg
 Collection : test
-Score : 0.7271528244018555
-Id : 968b5ab4a0934430354d6494b3c4d6ce
+Score : 0.7271525263786316
+Id : 72b5c17ebf4bca5d6f15e9c2c1fdff29
 File name : IMG_1106.jpeg
 Collection : test
-Score : 0.7361363172531128
-Id : 87b76243572f2b133d6cccf28f2562aa
+Score : 0.7361361980438232
+Id : b84b4bc71b936dc2213dddf841e94baf
 File name : IMG_1116.jpeg
 Collection : test
-Score : 0.7632312774658203
-Id : ba1e9cb5512f6eea1ae1adde8a6e34ec
-File name : IMG_0734.jpeg
-Collection : test
-Score : 0.7691144943237305
-Id : e525d955b4281e37da399284828f4f8d
-File name : IMG_2014.jpeg
-Collection : test
-Score : 0.7820137739181519
+Score : 0.7632315754890442
 ```
