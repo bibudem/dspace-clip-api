@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Search Form</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" >
+</head>
+<body class="container">
+<h1 class="my-4">Recherche</h1>
+<form method="post" enctype="multipart/form-data" name="formRecherche" class="mb-4">
+    <div class="form-group">
+        <label for="keyword">Mot-clé :</label>
+        <input type="text" id="keyword" name="keyword" required class="form-control">
+    </div>
+    <input type="hidden" id="formeResult" name="formeResult">
+
+    <button type="button" class="btn btn-primary" onclick="envoyerFormulaire('json')">Résultat en forme JSON</button>
+    <button type="button" class="btn btn-primary" onclick="envoyerFormulaire('html')">Résultat en forme HTML</button>
+</form>
+
+<script>
+    function envoyerFormulaire(forme) {
+        document.getElementById('formeResult').value = forme;
+
+        if (forme === 'json') {
+            document.formRecherche.action = '/search-rjson';
+        } else if (forme === 'html') {
+            document.formRecherche.action = '/search-rhtml';
+        }
+
+        document.formRecherche.submit();
+    }
+</script>
+</body>
+</html>

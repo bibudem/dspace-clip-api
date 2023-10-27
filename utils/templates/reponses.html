@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réponses</title>
+    <link href="../css/bootstrap4.min.css" rel="stylesheet">
+</head>
+<body class="container mt-5">
+{% if message_keyword %}
+<h2>{{ message_keyword }}</h2>
+{% endif %}
+{% if message_file %}
+<h2>{{ message_file }}</h2>
+{% endif %}
+<div class="card mb-4">
+    <div class="card-body">
+        {% for item in results_keyword %}
+        <div class="p-2">
+            <p >{{ item }}</p>
+            {% if item.image_name %}
+            <img src="img/{{ item.image_name }}" class="card-img-top" style="width: 200px; height: 150px;" alt="Image">
+            {% endif %}
+        </div>
+            {% endfor %}
+        {% for item in results_file %}
+        <div class="p-2">
+            <p >{{ item }}</p>
+            {% if item.image_name %}
+            <img src="img/{{ item.image_name }}" class="card-img-top" style="width: 200px; height: 150px;" alt="Image">
+            {% endif %}
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+</body>
+</html>

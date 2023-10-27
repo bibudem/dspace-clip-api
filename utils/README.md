@@ -86,3 +86,53 @@ File name : IMG_1116.jpeg
 Collection : test
 Score : 0.7632315754890442
 ```
+
+# Application Web avec FastAPI et Clip Client
+
+## Démarrage
+
+1. Assurez-vous d'avoir FastAPI, Clip Client et les autres dépendances installées. Vous pouvez les installer en exécutant la commande suivante :
+
+```bash
+pip install fastapi clip-client jina
+```
+
+2. Lancez le serveur FastAPI en exécutant le fichier `web.py` :
+
+```bash
+uvicorn web:app --reload
+```
+
+3. Rendez-vous sur [http://localhost:8000](http://localhost:8000) dans votre navigateur pour accéder à l'application.
+
+## Fonctionnement du Fichier `web.py`
+
+- Le fichier `web.py` utilise FastAPI pour créer une application Web.
+- Il définit différentes routes pour gérer les requêtes et les réponses.
+- Il utilise également le client Clip pour effectuer des recherches et récupérer les résultats.
+- Le fichier contient des fonctions utilitaires pour traiter les données du formulaire et formater les résultats.
+
+### Routes Principales
+
+1. **Page d'Accueil**
+
+    - Route : `/`
+    - Méthode : GET
+    - Affiche la page d'accueil avec un formulaire de recherche.
+
+2. **Recherche au Format JSON**
+
+    - Route : `/search-rjson`
+    - Méthode : POST
+    - Accepte une requête POST avec le mot-clé de recherche et renvoie les résultats au format JSON.
+
+3. **Recherche au Format HTML**
+
+    - Route : `/search-rhtml`
+    - Méthode : POST
+    - Accepte une requête POST avec le mot-clé de recherche et renvoie les résultats au format HTML.
+
+### Fonctions Utilitaires
+
+- `get_response_data(results)`: Extrait les données de réponse à partir des résultats de la recherche.
+- `get_formSearchValues(keyword)`: Traite les données du formulaire et renvoie les résultats formatés.
