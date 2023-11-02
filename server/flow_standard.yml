@@ -19,11 +19,15 @@ executors:
       with:
         n_dim: 512 # Dimension de l'espace vectoriel.
         metric: cosine # Métrique de similarité : cosinus.
-        include_metadata: true # Inclure les métadonnées.
         parameters:
           - [ 'tags', 'str' ] # Paramètres : tags (chaîne de caractères).
-        columns:
-          - [ 'collection', 'str' ] # Métadonnées qui peuvent servir de filtres pour les recherches, dans l'exemple ici c'est "collection"
+        include_metadata: true # Inclure les métadonnées.
+        columns: # Métadonnées qui peuvent servir de filtres pour les recherches, dans l'exemple ici c'est "collection"
+          - [ 'collectionId', 'str' ]
+          - [ 'itemid', 'str' ]
+          - [ 'itemHandle', 'str' ]
+          - [ 'itemName', 'str' ]
+          - [ 'fileName', 'str' ]
       metas:
         py_modules:
           - annlite.executor

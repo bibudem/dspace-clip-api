@@ -1,0 +1,84 @@
+{
+    "objets": [
+        {
+            "collectionId": "_plage",
+            "id": "0001",
+            "uuid": "0001",
+            "handle": null,
+            "name": "Paysage ensoleillé sur la plage",
+            "url": "../utils/img/IMG_0505.jpeg"
+        },
+        {
+            "collectionId": "_plage",
+            "id": "0002",
+            "uuid": "0002",
+            "handle": null,
+            "name": "Coquillages et coquillages sur le sable",
+            "url": "../utils/img/IMG_0734.jpeg"
+        },
+        {
+            "collectionId": "_plage",
+            "id": "0003",
+            "uuid": "0003",
+            "handle": null,
+            "name": "Surf sous les vagues de l'Atlantique",
+            "url": "../utils/img/IMG_0777.jpeg"
+        },
+        {
+            "collectionId": "_soleil",
+            "id": "0004",
+            "uuid": "0004",
+            "handle": null,
+            "name": "Coucher de soleil sur l'océan",
+            "url": "../utils/img/IMG_0963.jpeg"
+        },
+        {
+            "collectionId": "_soleil",
+            "id": "0005",
+            "uuid": "0005",
+            "handle": "_handle_exemple",
+            "name": "Palmiers se balançant dans la brise marine",
+            "url": "../utils/img/IMG_1106.jpeg"
+        },
+        {
+            "collectionId": "_soleil",
+            "id": "0006",
+            "uuid": "0006",
+            "handle": "_handle_exemple",
+            "name": "Famille construisant un château de sable",
+            "url": "../utils/img/IMG_1682.jpeg"
+        },
+        {
+            "collectionId": "_mer",
+            "id": "0007",
+            "uuid": "0007",
+            "handle": null,
+            "name": "Poissons tropicaux dans un lagon cristallin",
+            "url": "../utils/img/IMG_1116.jpeg"
+        },
+        {
+            "collectionId": "_soleil",
+            "id": "0008",
+            "uuid": "0008",
+            "handle": "",
+            "name": "Feu de joie sur la plage pendant la nuit",
+            "url": "../utils/img/IMG_1682.jpeg"
+        },
+        {
+            "collectionId": "_soleil",
+            "id": "0009",
+            "uuid": "0009",
+            "handle": "",
+            "name": "Pieds dans le sable, regardant l'horizon",
+            "url": "../utils/img/IMG_2014.jpeg"
+        },
+        {
+            "collectionId": "_soleil",
+            "id": "0010",
+            "uuid": "0010",
+            "handle": null,
+            "name": "Vagues déferlantes en journée ensoleillée",
+            "url": "../utils/img/IMG_2015.jpeg"
+        }
+    ]
+}
