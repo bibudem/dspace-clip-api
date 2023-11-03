@@ -1,6 +1,6 @@
 # dspace-clip-api / Dossier utils
 
-Ce dossier contient des outils et des exemples pour travailler avec le se serveur ou l'API.
+Ce dossier contient des outils et des exemples pour travailler avec le serveur ou l'API.
 
 Pour utiliser les scripts Python, vous devez installer le module clip-client de Jina:
 
@@ -14,7 +14,7 @@ Le script `indexation_clip.py` permet d'*indexer* des images, c'est-à-dire d'en
 
 Pour l'utiliser, assurez-vous d'avoir un [serveur](../server/README.md) démarré et vérifiez que le port et le protocole utilisés correspondant à ce qu'on retrouve dans le script `indexation_clip.py`.
 
-La ligne de commande est la suivante:
+Pour démarrer une indexation, la ligne de commande est la suivante:
 
 ```sh
 python indexation_clip.py --folder [dossier d'images] --collection [nom de la collection]
