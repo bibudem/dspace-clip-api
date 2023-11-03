@@ -3,7 +3,6 @@ from clip_client import Client
 from docarray import Document
 from fastapi import FastAPI, Query,Request, HTTPException
 from fastapi.responses import JSONResponse
-from configparser import ConfigParser
 from urllib.parse import urlparse
 import os
 import requests
@@ -13,11 +12,13 @@ import json
 # Initialisation de FastAPI
 app = FastAPI()
 
-# Lecture des configurations depuis le fichier INI
-config = ConfigParser()
-config.read('../utils/config/config.ini')
-client = Client(config['app']['CLIP_SERVER'])
-limit = int(config['app']['LIMIT'])
+# Lecture des configurations depuis le fichier JSON
+with open('../utils/config/config.json') as config_file:
+    config = json.load(config_file)
+
+# Initialisation du client CLIP
+client = Client(config['clip_server'])
+limit = config['limit']
 
 # Route principale de l'API
 @app.get("/")
@@ -100,7 +101,6 @@ def search_object(results, content):
 
         content["_embedded"]["searchResult"]["_embedded"]["_embedded"]["indexableObject"].append(item)
 
-# Route d'indexation d'images
 @app.get("/index")
 async def indexation(
     collectionId: str = Query(None),
@@ -110,10 +110,11 @@ async def indexation(
     name: str = Query(None),
     handle: str = Query(None)
 ):
-    image_extensions = ['.jpg', '.jpeg', '.png', '.gif']  # Liste des extensions d'images acceptées
-    if url and any(url.endswith(ext) for ext in image_extensions):
-        image_path = urlparse(url).path
+    try:
+        if not url:
+            raise HTTPException(status_code=400, detail="Veuillez fournir une URL.")
 
+        image_path = urlparse(url).path
         # Extraction du nom du dossier et du fichier
         folder_name, file_name = os.path.split(image_path)
 
@@ -128,53 +129,10 @@ async def indexation(
         # Indexation du document
         client.index([document])
 
-        return {"index": "ok", "folder_name": folder_name, "file_name": file_name}
-
-    raise HTTPException(status_code=400, detail="L'URL fournie n'a pas une extension d'image valide.")
-
-# Route d'indexation à partir d'un fichier JSON
-@app.get("/index_from_json")
-async def index_from_json():
-    content = {}
-    indexed_objects = []  # Liste pour stocker les objets indexés
-    try:
-        # Ouverture et lecture du fichier JSON
-        with open('exemple.json', 'r', encoding='utf-8') as file:
-            data = json.load(file)
-
-        # Enregistrement du temps de début
-        start_time = time.time()
-
-        for objet in data['objets']:
-            collectionId = objet['collectionId']
-            id = objet['id']
-            uuid = objet['uuid']
-            name = objet['name']
-            url = objet['url']
-
-            # Appel de la méthode d'indexation
-            await indexation(collectionId=collectionId, url=url, id=id, uuid=uuid, name=name)
-
-            # Ajout des informations de l'objet indexé à la liste
-            indexed_objects.append({
-                "collectionId": collectionId,
-                "id": id,
-                "uuid": uuid,
-                "name": name,
-                "url": url
-            })
-
-        # Enregistrement du temps de fin
-        end_time = time.time()
-
-        # Calcul de la durée d'exécution
-        execution_time = end_time - start_time
-
-        content["temps"] = f"Temps d'exécution : {execution_time} secondes"
-        content["message"] = f'Indexation terminée pour {len(data["objets"])} objets.'
-        content["indexed_objects"] = indexed_objects  # Ajout des objets indexés aux résultats
-
-        return JSONResponse(content)
-
+        return {"indexation": "réalisée", "file_name": file_name}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur serveur : {e}")
+        # Vous pouvez traiter l'exception ici, par exemple, la journaliser ou renvoyer un message d'erreur personnalisé.
+        return {"error": str(e)}
+
+
+
