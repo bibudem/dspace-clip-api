@@ -13,13 +13,13 @@ templates = Jinja2Templates(directory="templates")
 app.mount("/img", StaticFiles(directory="img"), name="img")
 
 
-# Lecture des paramètres depuis le fichier de configuration dans le dossier "config"
-config = ConfigParser()
-config.read('config/config.ini')
+# Lecture des configurations depuis le fichier JSON
+with open('../utils/config/config.json') as config_file:
+    config = json.load(config_file)
 
-# Initialisation du client Clip
-c = Client(config['app']['CLIP_SERVER'])
-limit = int(config['app']['LIMIT'])
+# Initialisation du client CLIP
+c = Client(config['clip_server'])
+limit = config['limit']
 
 # Route pour la page d'accueil
 @app.get("/", response_class=HTMLResponse)
