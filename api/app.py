@@ -23,7 +23,7 @@ limit = config['limit']
 # Route principale de l'API
 @app.get("/")
 async def read_root():
-    return {"projet": "api-dspace-clip"}
+    return {"projet": "dspace-clip-api"}
 
 # Route de recherche
 @app.get("/search")
