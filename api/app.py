@@ -52,7 +52,6 @@ async def search(
             }
         }
     }
-
     # Recherche par requête
     if query:
         if scope:
