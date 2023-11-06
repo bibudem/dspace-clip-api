@@ -65,7 +65,7 @@ def get_response_data(results):
             "Id": result.id,
             "Score": cosine_value,
             "image_name": image_name,
-            "collection": result.tags['collection'],
+            "collection": result.tags.get('collection', ''),
         }
         response_data.append(item)
 
