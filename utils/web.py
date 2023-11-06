@@ -5,7 +5,8 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 import os
-from configparser import ConfigParser
+import json
+import requests
 
 # Initialisation de l'application FastAPI
 app = FastAPI()
@@ -13,13 +14,13 @@ templates = Jinja2Templates(directory="templates")
 app.mount("/img", StaticFiles(directory="img"), name="img")
 
 
-# Lecture des paramètres depuis le fichier de configuration dans le dossier "config"
-config = ConfigParser()
-config.read('config/config.ini')
+# Lecture des configurations depuis le fichier JSON
+with open('./config/config.json') as config_file:
+    config = json.load(config_file)
 
-# Initialisation du client Clip
-c = Client(config['app']['CLIP_SERVER'])
-limit = int(config['app']['LIMIT'])
+# Initialisation du client CLIP
+client = Client(config['clip_server'])
+limit = config['limit']
 
 # Route pour la page d'accueil
 @app.get("/", response_class=HTMLResponse)
@@ -30,7 +31,7 @@ async def home(request: Request):
 async def search(request: Request, keyword: str = Query(None), format: str = Query(None)):
     content = {}
     if keyword:
-        search_result_keyword = c.search([keyword], limit)
+        search_result_keyword = client.search([keyword], limit)
         results_keyword = search_result_keyword[0].matches
 
         # Appel aux fonctions utilitaires pour obtenir les données de réponse
