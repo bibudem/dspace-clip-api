@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Réponses</title>
+    <title>Résultats de recherche d'images</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" >
 </head>
 <body class="container mt-5">
@@ -18,16 +18,16 @@
         {% for item in results_keyword %}
         <div class="p-2">
             <p >{{ item }}</p>
-            {% if item.image_name %}
-            <img src="img/{{ item.image_name }}" class="card-img-top" style="width: 200px; height: 150px;" alt="Image">
+            {% if item.Fichier %}
+            <img src="img/{{ item.Fichier }}" class="card-img-top" style="width: 200px; height: 150px;" alt="Image">
             {% endif %}
         </div>
             {% endfor %}
         {% for item in results_file %}
         <div class="p-2">
             <p >{{ item }}</p>
-            {% if item.image_name %}
-            <img src="img/{{ item.image_name }}" class="card-img-top" style="width: 200px; height: 150px;" alt="Image">
+            {% if item.Fichier %}
+            <img src="img/{{ item.Fichier }}" class="card-img-top" style="width: 200px; height: 150px;" alt="Image">
             {% endif %}
         </div>
         {% endfor %}

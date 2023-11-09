@@ -36,7 +36,7 @@ async def search(request: Request, keyword: str = Query(None), format: str = Que
 
         # Appel aux fonctions utilitaires pour obtenir les données de réponse
         response_data_keyword = get_response_data(results_keyword)
-        message_keyword = f"Voici les résultats pour le mot clé: {keyword}"
+        message_keyword = f"Résultats pour la recherche: {keyword}"
 
         content["message_keyword"] = message_keyword
         content["results_keyword"] = response_data_keyword
@@ -64,9 +64,9 @@ def get_response_data(results):
 
         item = {
             "Id": result.id,
-            "Score": cosine_value,
-            "image_name": image_name,
-            "collection": result.tags.get('collection', ''),
+            "Proximité": cosine_value,
+            "Fichier": image_name,
+            "Collection": result.tags.get('collection', ''),
         }
         response_data.append(item)
 
