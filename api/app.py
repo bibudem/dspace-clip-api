@@ -13,7 +13,7 @@ import json
 app = FastAPI()
 
 # Lecture des configurations depuis le fichier JSON
-with open('../utils/config/config.json') as config_file:
+with open('config/config.json') as config_file:
     config = json.load(config_file)
 
 # Initialisation du client CLIP

@@ -5,6 +5,39 @@
 
 Cette API permet l'indexation et la recherche d'images à l'aide du serveur CLIP.
 
+## Démarrage de l'API FastAPI
+
+Pour lancer l'API FastAPI, suivez ces simples :
+
+1. **Assurez-vous d'être dans le répertoire de votre application où se trouve le fichier `app.py`.**
+
+2. **Exécutez la commande suivante dans votre terminal :**
+
+   ```bash
+   uvicorn app:app --reload
+   ```
+
+   L'option `--reload` permet un rechargement automatique de l'API lors de la modification du code. Veillez à laisser le terminal ouvert pendant l'utilisation de l'API.
+
+## Accès à l'API
+
+Une fois l'API démarrée, vous avez deux options pour accéder à la documentation interactive et explorer les fonctionnalités :
+
+1. **Swagger - Interface Interactive :**
+    - Ouvrez votre navigateur et visitez l'URL [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+
+2. **ReDoc - Documentation Visuelle :**
+    - Accédez à l'interface ReDoc en visitant l'URL [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc).
+    
+## Utilisation de l'API
+
+Une fois l'API démarrée, vous pouvez utiliser les points de terminaison définis dans votre application FastAPI, tels que `/search` et `/index`. Consultez la section "Fonctionnalités" dans le fichier README pour des exemples d'appels CURL.
+
+## Arrêt de l'API
+
+Pour arrêter l'API, vous pouvez interrompre le processus en cours d'exécution. Dans le terminal, utilisez la combinaison de touches `Ctrl + C`. Assurez-vous de faire cela dans le terminal où vous avez lancé l'API.
+
+
 ## Fonctionnalités
 
 ### Indexation d'Images
