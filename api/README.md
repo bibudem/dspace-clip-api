@@ -7,17 +7,15 @@ Cette API permet l'indexation et la recherche d'images à l'aide du serveur CLIP
 
 ## Démarrage de l'API FastAPI
 
-Pour lancer l'API FastAPI, suivez ces simples :
+1. **Démarrer le serveur CLIP :**
+   - Assurez-vous d'être dans le répertoire du serveur où se trouve le fichier `flow_api.yml`.
+   - Exécutez la commande suivante dans votre terminal : `python -m clip_server server/flow_api.yml`
 
-1. **Assurez-vous d'être dans le répertoire de votre application où se trouve le fichier `app.py`.**
+2. **Lancer l'API FastAPI :**
+   - Assurez-vous d'être dans le répertoire de l'application où se trouve le fichier `app.py`.
+   - Exécutez la commande suivante dans votre terminal : `uvicorn app:app --reload`
 
-2. **Exécutez la commande suivante dans votre terminal :**
-
-   ```bash
-   uvicorn app:app --reload
-   ```
-
-   L'option `--reload` permet un rechargement automatique de l'API lors de la modification du code. Veillez à laisser le terminal ouvert pendant l'utilisation de l'API.
+    L'option `--reload` permet un rechargement automatique de l'API lors de la modification du code. Veillez à laisser le terminal ouvert pendant l'utilisation de l'API.
 
 ## Accès à l'API
 
@@ -42,7 +40,7 @@ Pour arrêter l'API, vous pouvez interrompre le processus en cours d'exécution.
 
 ### Indexation d'Images
 
-#### Endpoint : `GET /index`
+#### Endpoint : `POST /index`
 
 Cette route permet d'indexer une image en spécifiant les paramètres suivants :
 
@@ -58,15 +56,15 @@ L'indexation est effectuée en extrayant les informations pertinentes de l'URL d
 Exemple d'appel CURL :
 
 ```bash
-curl -X GET "http://localhost:8000/index?collectionId=_plage&id=0001&uuid=0001&name=Paysage%20ensoleill%C3%A9%20sur%20la%20plage&url=../utils/img/IMG_0505.jpeg" -H 'accept: application/json'
+curl -X POST "http://localhost:8000/index/1001?collectionId=_plage&uuid=1001&name=Paysage%20ensoleill%C3%A9%20sur%20la%20plage&url=../utils/img/IMG_0505.jpeg" -H 'accept: application/json'
 
-curl -X GET "http://localhost:8000/index?collectionId=_plage&id=0002&uuid=0002&name=Coquillages%20et%20coquillages%20sur%20le%20sable&url=../utils/img/IMG_0734.jpeg" -H 'accept: application/json'
+curl -X POST "http://localhost:8000/index/1002?collectionId=_plage&uuid=1002&name=Coquillages%20et%20coquillages%20sur%20le%20sable&url=../utils/img/IMG_0734.jpeg" -H 'accept: application/json'
 
-curl -X GET "http://localhost:8000/index?collectionId=_plage&id=0003&uuid=0003&name=Surf%20sous%20les%20vagues%20de%20l%27Atlantique&url=../utils/img/IMG_0777.jpeg" -H 'accept: application/json'
+curl -X POST "http://localhost:8000/index/1003?collectionId=_plage&uuid=1003&name=Surf%20sous%20les%20vagues%20de%20l%27Atlantique&url=../utils/img/IMG_0777.jpeg" -H 'accept: application/json'
 
-curl -X GET "http://localhost:8000/index?collectionId=_soleil&id=0004&uuid=0004&name=Coucher%20de%20soleil%20sur%20l%27oc%C3%A9an&url=../utils/img/IMG_0963.jpeg" -H 'accept: application/json'
+curl -X POST "http://localhost:8000/index/1004?collectionId=_soleil&uuid=1004&name=Coucher%20de%20soleil%20sur%20l%27oc%C3%A9an&url=../utils/img/IMG_0963.jpeg" -H 'accept: application/json'
 
-curl -X GET "http://localhost:8000/index?collectionId=_soleil&id=0006&uuid=0006&name=Famille%20construisant%20un%20ch%C3%A2teau%20de%20sable&handle=_handle_exemple&url=../utils/img/IMG_1682.jpeg" -H 'accept: application/json'
+curl -X POST "http://localhost:8000/index/1005?collectionId=_soleil&uuid=1005&name=Famille%20construisant%20un%20ch%C3%A2teau%20de%20sable&handle=_handle_exemple&url=../utils/img/IMG_1682.jpeg" -H 'accept: application/json'
 ```
 
 ### Recherche d'Images
