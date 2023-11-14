@@ -9,7 +9,7 @@ Cette API permet l'indexation et la recherche d'images à l'aide du serveur CLIP
 
 1. **Démarrer le serveur CLIP :**
    - Assurez-vous d'être dans le répertoire du serveur où se trouve le fichier `flow_api.yml`.
-   - Exécutez la commande suivante dans votre terminal : `python -m clip_server server/flow_api.yml`
+   - Exécutez la commande suivante dans votre terminal : `python -m clip_server flow_api.yml`
 
 2. **Lancer l'API FastAPI :**
    - Assurez-vous d'être dans le répertoire de l'application où se trouve le fichier `app.py`.
