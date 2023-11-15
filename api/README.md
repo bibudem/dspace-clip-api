@@ -40,7 +40,7 @@ Pour arrêter l'API, vous pouvez interrompre le processus en cours d'exécution.
 
 ### Indexation d'Images
 
-#### Endpoint : `POST /index`
+#### Endpoint : `POST /{id}`
 
 Cette route permet d'indexer une image en spécifiant les paramètres suivants :
 
@@ -56,15 +56,15 @@ L'indexation est effectuée en extrayant les informations pertinentes de l'URL d
 Exemple d'appel CURL :
 
 ```bash
-curl -X POST "http://localhost:8000/index/1001?collectionId=_plage&uuid=1001&name=Paysage%20ensoleill%C3%A9%20sur%20la%20plage&url=../utils/img/IMG_0505.jpeg" -H 'accept: application/json'
+curl -X POST "http://localhost:8000/1001?collectionId=_plage&uuid=1001&name=Paysage%20ensoleill%C3%A9%20sur%20la%20plage&url=../utils/img/IMG_0505.jpeg" -H 'accept: application/json'
 
-curl -X POST "http://localhost:8000/index/1002?collectionId=_plage&uuid=1002&name=Coquillages%20et%20coquillages%20sur%20le%20sable&url=../utils/img/IMG_0734.jpeg" -H 'accept: application/json'
+curl -X POST "http://localhost:8000/1002?collectionId=_plage&uuid=1002&name=Coquillages%20et%20coquillages%20sur%20le%20sable&url=../utils/img/IMG_0734.jpeg" -H 'accept: application/json'
 
-curl -X POST "http://localhost:8000/index/1003?collectionId=_plage&uuid=1003&name=Surf%20sous%20les%20vagues%20de%20l%27Atlantique&url=../utils/img/IMG_0777.jpeg" -H 'accept: application/json'
+curl -X POST "http://localhost:8000/1003?collectionId=_plage&uuid=1003&name=Surf%20sous%20les%20vagues%20de%20l%27Atlantique&url=../utils/img/IMG_0777.jpeg" -H 'accept: application/json'
 
-curl -X POST "http://localhost:8000/index/1004?collectionId=_soleil&uuid=1004&name=Coucher%20de%20soleil%20sur%20l%27oc%C3%A9an&url=../utils/img/IMG_0963.jpeg" -H 'accept: application/json'
+curl -X POST "http://localhost:8000/1004?collectionId=_soleil&uuid=1004&name=Coucher%20de%20soleil%20sur%20l%27oc%C3%A9an&url=../utils/img/IMG_0963.jpeg" -H 'accept: application/json'
 
-curl -X POST "http://localhost:8000/index/1005?collectionId=_soleil&uuid=1005&name=Famille%20construisant%20un%20ch%C3%A2teau%20de%20sable&handle=_handle_exemple&url=../utils/img/IMG_1682.jpeg" -H 'accept: application/json'
+curl -X POST "http://localhost:8000/1005?collectionId=_soleil&uuid=1005&name=Famille%20construisant%20un%20ch%C3%A2teau%20de%20sable&handle=_handle_exemple&url=../utils/img/IMG_1682.jpeg" -H 'accept: application/json'
 ```
 
 ### Recherche d'Images

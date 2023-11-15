@@ -125,7 +125,7 @@ def search_object(results, content):
     except Exception as e:
        raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
 
-@app.post("/index/{id}")
+@app.post("/{id}")
 async def indexation(
     id: int = Path(..., title="ID de l'image"),
     collectionId: str = Query(None),
