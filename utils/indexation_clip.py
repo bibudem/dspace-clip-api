@@ -2,6 +2,7 @@ import os
 from clip_client import Client
 from docarray import Document
 import time
+import numpy as np
 import argparse
 
 def index_images_in_folder(client, folder_path,collection_name):

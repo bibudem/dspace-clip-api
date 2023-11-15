@@ -1,4 +1,7 @@
 /.idea
 /.env
 /server/workspace
+/server/workspace-api
+/utils/__pycache__/
+/api/__pycache__/
 /utils/__pycache__/

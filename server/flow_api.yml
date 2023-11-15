@@ -1,0 +1,35 @@
+jtype: Flow
+version: '1'
+
+gateway: # Configuration des points d'entrée, vous pouvez modifier les ports ou retirer des protocoles
+  protocol: [grpc, http, websocket]
+  port: [51000, 54322, 54323]
+
+executors: 
+  - name: encoder # Un éxécuteur Jina pour extraire les "features" des images avec le modèle de langage CLIP
+    uses:
+      jtype: CLIPEncoder
+      metas:
+        py_modules:
+          - clip_server.executors.clip_torch
+
+  - name: indexer # Un exécuteur Jina pour indexer les vecteurs de "features" avec l'outil Ann Lite
+    uses:
+      jtype: AnnLiteIndexer
+      with:
+        n_dim: 512 # Dimension de l'espace vectoriel.
+        metric: cosine # Métrique de similarité : cosinus.
+        parameters:
+          - [ 'tags', 'str' ] # Paramètres : tags (chaîne de caractères).
+        include_metadata: true # Inclure les métadonnées.
+        columns: # Métadonnées qui peuvent servir de filtres pour les recherches, dans l'exemple ici c'est "collection"
+          - [ 'collectionId', 'str' ]
+          - [ 'itemid', 'str' ]
+          - [ 'itemHandle', 'str' ]
+          - [ 'itemName', 'str' ]
+          - [ 'fileName', 'str' ]
+      metas:
+        py_modules:
+          - annlite.executor
+
+    workspace: './workspace-api' # Emplacement où Ann Lite va stocker ses fichiers d'index

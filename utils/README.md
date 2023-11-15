@@ -1,6 +1,6 @@
 # dspace-clip-api / Dossier utils
 
-Ce dossier contient des outils et des exemples pour travailler avec le serveur ou l'API.
+Ce dossier contient des outils et des exemples pour travailler avec le se serveur ou l'API.
 
 Pour utiliser les scripts Python, vous devez installer le module clip-client de Jina:
 
@@ -14,7 +14,7 @@ Le script `indexation_clip.py` permet d'*indexer* des images, c'est-à-dire d'en
 
 Pour l'utiliser, assurez-vous d'avoir un [serveur](../server/README.md) démarré et vérifiez que le port et le protocole utilisés correspondant à ce qu'on retrouve dans le script `indexation_clip.py`.
 
-Pour démarrer une indexation, la ligne de commande est la suivante:
+La ligne de commande est la suivante:
 
 ```sh
 python indexation_clip.py --folder [dossier d'images] --collection [nom de la collection]
@@ -86,50 +86,3 @@ File name : IMG_1116.jpeg
 Collection : test
 Score : 0.7632315754890442
 ```
-
-# Application Web avec FastAPI et Clip Client
-
-## Démarrage
-
-1. Assurez-vous d'avoir FastAPI, Clip Client et les autres dépendances installées. Vous pouvez les installer en exécutant la commande suivante :
-
-```bash
-pip install fastapi
-```
-
-```bash
-pip install "uvicorn[standard]"
-```
-
-2. Lancez le serveur FastAPI en exécutant le fichier `web.py` :
-
-```bash
-uvicorn web:app --reload
-```
-
-3. Rendez-vous sur [http://localhost:8000](http://localhost:8000) dans votre navigateur pour accéder à l'application.
-
-## Fonctionnement du Fichier `web.py`
-
-- Le fichier `web.py` utilise FastAPI pour créer une application Web.
-- Il définit différentes routes pour gérer les requêtes et les réponses.
-- Il utilise également le client Clip pour effectuer des recherches et récupérer les résultats.
-- Le fichier contient des fonctions utilitaires pour traiter les données du formulaire et formater les résultats.
-
-### Routes Principales
-
-1. **Page d'Accueil**
-
-   - Route : `/`
-   - Méthode : GET
-   - Affiche la page d'accueil avec un formulaire de recherche.
-
-2. **Recherche au Format JSON ou HTML**
-
-   - Route : `/search`
-   - Méthode : GET
-   - Accepte une requête GET avec le mot-clé et format, ensuite renvoie les résultats dans le format choisi.
-
-### Fonctions Utilitaires
-
-- `get_response_data(results)`: Extrait les données de réponse à partir des résultats de la recherche.
