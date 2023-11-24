@@ -7,6 +7,16 @@ import os
 import json
 import grpc
 from grpc_health.v1 import health_pb2, health_pb2_grpc
+from pydantic import BaseModel
+
+# Une classe pour représenter une image à indexer
+class Image(BaseModel):
+    itemId: str
+    itemHandle: str
+    itemName: str
+    collectionId: str
+    url: str
+
 
 # Initialisation de FastAPI
 app = FastAPI()
@@ -102,18 +112,24 @@ def search_object(results, content):
             cosine_value = round(result.scores.get('cosine').value, 2)
             image_name = os.path.basename(result.uri) if result.uri else ''
 
+#            document = Document(uri=image.url, id=image.itemId)
+#            document.tags['collectionId'] = str(image.collectionId) if image.collectionId else ''
+#            document.tags['itemId'] = str(image.itemId) if image.itemId else ''
+#            document.tags['itemHandle'] = str(image.itemHandle) if image.itemHandle else ''
+#            document.tags['itemName'] = str(image.itemName) if image.itemName else ''
+
             item = {
-                "idClip": result.id,
-                "id": result.tags.get('itemid', ''),
-                "uuid": result.tags.get('itemid', ''),
-                "name": result.tags.get('itemName', ''),
-                "handle": result.tags.get('itemHandle', ''),
+                "id": result.id,
+                "url": result.uri,
+                "itemId": result.tags.get('itemId', ''),
+                "itemName": result.tags.get('itemName', ''),
+                "itemHandle": result.tags.get('itemHandle', ''),
+                "collectionId": result.tags.get('collectionId', ''),
                 "_embedded": {
                     "image": {
-                        "id": result.tags.get('itemid', ''),
-                        "uuid": result.tags.get('itemid', ''),
-                        "Score": cosine_value,
-                        "name": image_name
+                        "id": result.id,
+                        "score": cosine_value,
+                        "name": result.tags.get('itemName', '')
                     }
                 }
             }
@@ -125,40 +141,42 @@ def search_object(results, content):
     except Exception as e:
        raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
 
+# Ajout d'une image
 @app.post("/{id}")
-async def indexation(
-    id: int = Path(..., title="ID de l'image"),
-    collectionId: str = Query(None),
-    url: str = Query(None),
-    uuid: str = Query(None),
-    name: str = Query(None),
-    handle: str = Query(None)
-):
+async def indexation(image: Image):
+
     # Vérification de l'état du serveur gRPC
     if not check_grpc_server_status(grpc_server):
         # Gérer l'erreur de connexion au serveur CLIP
         raise HTTPException(status_code=500, detail="Le serveur CLIP est indisponible. Veuillez réessayer plus tard.")
     else:
         try:
-            if not url:
+            if not image.url:
                 raise HTTPException(status_code=400, detail="Veuillez fournir un URL.")
 
-            image_path = urlparse(url).path
-            # Extraction du nom du dossier et du fichier
-            folder_name, file_name = os.path.split(image_path)
-
             # Création d'un document avec les balises associées
-            document = Document(uri=image_path)
-            document.tags['collectionId'] = str(collectionId) if collectionId else ''
-            document.tags['itemid'] = str(id) if id else ''
-            document.tags['itemHandle'] = str(handle) if handle else ''
-            document.tags['itemName'] = str(name) if name else ''
-            document.tags['fileName'] = str(file_name) if file_name else ''
+            document = Document(uri=image.url, id=image.itemId)
+            document.tags['collectionId'] = str(image.collectionId) if image.collectionId else ''
+            document.tags['itemId'] = str(image.itemId) if image.itemId else ''
+            document.tags['itemHandle'] = str(image.itemHandle) if image.itemHandle else ''
+            document.tags['itemName'] = str(image.itemName) if image.itemName else ''
 
             # Indexation du document
             client.index([document])
 
-            return {"indexation": "réalisée", "file_name": file_name}
+            return {"indexation": "réalisée", "url": image.url}
 
         except Exception as e:
            raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
+
+# Suppression d'une image
+@app.delete("/{itemId}")
+async def suppression(itemId):
+    try:
+        # Utilisation de la méthode delete du client pour supprimer l'élément
+        client.delete(itemId)
+        return("Suppression de l'image " + itemId + " réussie")
+
+    except Exception as e:
+        # Capturez les exceptions spécifiques dont vous avez besoin (ajoutez des exceptions selon vos besoins)
+        raise HTTPException(status_code=500, detail="Une erreur s'est produite lors de la suppression de l'image " + itemId)
