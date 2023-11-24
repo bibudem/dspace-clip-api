@@ -19,7 +19,7 @@ class ClientCrud(Client):
         on_error: Optional[Callable[['DataRequest'], None]] = None,
         on_always: Optional[Callable[['DataRequest'], None]] = None,
         prefetch: int = 100,
-    ) -> DocumentArray:
+    ):
         """Delete content.
         :param content: an iterable of content (IDs or other identifiers) to be deleted.
         :param batch_size: the number of elements in each request when sending content.
@@ -33,34 +33,18 @@ class ClientCrud(Client):
         """
 
     def delete(self, document_id, **kwargs):
-        print(f"Calling delete : {document_id}")
 
-        # Utilisez le callback on_done pour récupérer les résultats
-        response = self._client.post(
+        # Les images à supprimer doivent être dans
+        # un paramètre ids qui contient une liste
+        # de ID de Document. Dans notre cas, on aura
+        # toujours une seule image à supprimer.
+        parameters = kwargs.pop('parameters', {})
+        parameters['ids'] = [document_id]
+
+        # On appelle simplement la méthode /delete
+        # du serveur AnnLite
+        self._client.post(
             on='/delete',
-            data={"document_id": document_id}
+            parameters=parameters
         )
 
-        print(f"Response from delete: {response}")
-
-        # Décomposez davantage l'objet DocumentArray
-        for document in response:
-            print(f"Document ID: {document}")
-            print(f"Document text: {document.text}")
-            print(f"Document ID: {document.id}")
-            # Ajoutez d'autres informations sur le document au besoin
-
-    def deleteAnnlite(self, document_ids, **kwargs):
-        try:
-            annlite_index = AnnLiteIndexer(n_dim=512, metric='cosine')
-            annlite_index.index(document_ids)
-
-            ids = document_ids
-            annlite_index.delete({'ids': ids})
-            assert len(annlite_index._index) == len(document_ids) - 3
-            for doc_id in ids:
-                assert doc_id not in annlite_index._index
-        finally:
-            # Mettre ces deux lignes ici, à la fin de la fonction
-            annlite_index.flush()
-            annlite_index.close()
