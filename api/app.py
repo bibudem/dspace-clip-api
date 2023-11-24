@@ -1,5 +1,5 @@
 # Importations de modules
-from clip_client import Client
+from clip_client_crud import ClientCrud
 from docarray import Document
 from fastapi import FastAPI, Query, HTTPException, Path
 from urllib.parse import urlparse
@@ -16,7 +16,7 @@ with open('config/config.json') as config_file:
     config = json.load(config_file)
 
 # Initialisation du client CLIP et autres paramètres
-client = Client(config['clip_server'])
+client = ClientCrud(config['clip_server'])
 limit = config['limit']
 grpc_server = config['grpc_server']
 
