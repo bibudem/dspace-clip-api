@@ -1,22 +1,21 @@
 # Importations de modules
+from fastapi import FastAPI, Query, HTTPException
+from pydantic import BaseModel
 from clip_client_crud import ClientCrud
 from docarray import Document
-from fastapi import FastAPI, Query, HTTPException, Path
-from urllib.parse import urlparse
+from grpc_health.v1 import health_pb2, health_pb2_grpc
 import os
 import json
 import grpc
-from grpc_health.v1 import health_pb2, health_pb2_grpc
-from pydantic import BaseModel
 
 # Une classe pour représenter une image à indexer
 class Image(BaseModel):
     itemId: str
+    uuid: str
     itemHandle: str
     itemName: str
     collectionId: str
     url: str
-
 
 # Initialisation de FastAPI
 app = FastAPI()
@@ -46,6 +45,13 @@ def check_grpc_server_status(server_address):
         # Une erreur peut se produire si le serveur n'est pas en cours d'exécution
         return False
 
+# Appeler la méthode check_grpc_server_status lors du démarrage de l'application
+@app.on_event("startup")
+async def startup_event():
+    if not check_grpc_server_status(grpc_server):
+        # Gérer l'erreur de connexion au serveur CLIP
+        raise HTTPException(status_code=500, detail="Le serveur CLIP est indisponible. Veuillez réessayer plus tard.")
+
 # Route principale de l'API
 @app.get("/")
 async def read_root():
@@ -59,51 +65,43 @@ async def search(
     scope: str = Query(None),
     size: int = Query(10)
 ):
-    # Vérification de l'état du serveur gRPC
-    if not check_grpc_server_status(grpc_server):
-        # Gérer l'erreur de connexion au serveur CLIP
-        raise HTTPException(status_code=500, detail="Le serveur CLIP est indisponible. Veuillez réessayer plus tard.")
-    else:
-        try:
-           if not query and not url:
-               raise HTTPException(status_code=400, detail="Veuillez fournir une requête ou une URL d'image.")
 
-           # Initialisation de la structure de réponse
-           content = {
-               "query": query,
-               "url": url,
-               "scope": scope,
-               "_embedded": {
-                   "searchResult": {
-                       "_embedded": {
-                           "_embedded": {
-                               "indexableObject": []
-                           }
-                       }
-                   }
-               }
-           }
+    try:
+        # Initialisation de la structure de réponse
+        content = {
+            "query": query,
+            "url": url,
+            "scope": scope,
+            "_embedded": {
+                "searchResult": {
+                    "_embedded": {
+                        "_embedded": {
+                            "indexableObject": []
+                        }
+                    }
+                }
+            }
+        }
 
-           # Recherche par requête
-           if query:
-               filter_add = {"collectionId": {"$eq": scope}} if scope else {}
-               search_result = client.search([query], parameters={"filter": filter_add}, limit=size)
-               results = search_result[0].matches
-               search_object(results, content)
+        # Recherche par requête
+        if query:
+            filter_add = {"collectionId": {"$eq": scope}} if scope else {}
+            search_result = client.search([query], parameters={"filter": filter_add}, limit=size)
+            results = search_result[0].matches
+            search_object(results, content)
 
-           # Recherche par URL
-           if url:
-               filter_add = {"collectionId": {"$eq": scope}} if scope else {}
-               search_result = client.search([url], parameters={"filter": filter_add}, limit=size)
-               results = search_result[0].matches
-               search_object(results, content)
+        # Recherche par URL
+        if url:
+            filter_add = {"collectionId": {"$eq": scope}} if scope else {}
+            search_result = client.search([url], parameters={"filter": filter_add}, limit=size)
+            results = search_result[0].matches
+            search_object(results, content)
 
-           return content
+        return content
 
-        except Exception as e:
-               # Autres erreurs non liées à la connexion gRPC
-            raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
-
+    except Exception as e:
+        # Autres erreurs non liées à la connexion gRPC
+        raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
 
 # Fonction de traitement des résultats de recherche
 def search_object(results, content):
@@ -112,16 +110,11 @@ def search_object(results, content):
             cosine_value = round(result.scores.get('cosine').value, 2)
             image_name = os.path.basename(result.uri) if result.uri else ''
 
-#            document = Document(uri=image.url, id=image.itemId)
-#            document.tags['collectionId'] = str(image.collectionId) if image.collectionId else ''
-#            document.tags['itemId'] = str(image.itemId) if image.itemId else ''
-#            document.tags['itemHandle'] = str(image.itemHandle) if image.itemHandle else ''
-#            document.tags['itemName'] = str(image.itemName) if image.itemName else ''
-
             item = {
                 "id": result.id,
                 "url": result.uri,
                 "itemId": result.tags.get('itemId', ''),
+                "uuid": result.tags.get('uuid', ''),
                 "itemName": result.tags.get('itemName', ''),
                 "itemHandle": result.tags.get('itemHandle', ''),
                 "collectionId": result.tags.get('collectionId', ''),
@@ -139,35 +132,30 @@ def search_object(results, content):
 
             content["_embedded"]["searchResult"]["_embedded"]["_embedded"]["indexableObject"].append(item)
     except Exception as e:
-       raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
+        raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
 
 # Ajout d'une image
 @app.post("/{id}")
 async def indexation(image: Image):
+    try:
+        if not image.url:
+            raise HTTPException(status_code=400, detail="Veuillez fournir un URL.")
 
-    # Vérification de l'état du serveur gRPC
-    if not check_grpc_server_status(grpc_server):
-        # Gérer l'erreur de connexion au serveur CLIP
-        raise HTTPException(status_code=500, detail="Le serveur CLIP est indisponible. Veuillez réessayer plus tard.")
-    else:
-        try:
-            if not image.url:
-                raise HTTPException(status_code=400, detail="Veuillez fournir un URL.")
+        # Création d'un document avec les balises associées
+        document = Document(uri=image.url, id=image.itemId)
+        document.tags['collectionId'] = str(image.collectionId) if image.collectionId else ''
+        document.tags['itemId'] = str(image.itemId) if image.itemId else ''
+        document.tags['uuid'] = str(image.uuid) if image.uuid else ''
+        document.tags['itemHandle'] = str(image.itemHandle) if image.itemHandle else ''
+        document.tags['itemName'] = str(image.itemName) if image.itemName else ''
 
-            # Création d'un document avec les balises associées
-            document = Document(uri=image.url, id=image.itemId)
-            document.tags['collectionId'] = str(image.collectionId) if image.collectionId else ''
-            document.tags['itemId'] = str(image.itemId) if image.itemId else ''
-            document.tags['itemHandle'] = str(image.itemHandle) if image.itemHandle else ''
-            document.tags['itemName'] = str(image.itemName) if image.itemName else ''
+        # Indexation du document
+        client.index([document])
 
-            # Indexation du document
-            client.index([document])
+        return {"indexation": "réalisée", "url": image.url}
 
-            return {"indexation": "réalisée", "url": image.url}
-
-        except Exception as e:
-           raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
 
 # Suppression d'une image
 @app.delete("/{itemId}")
@@ -175,8 +163,8 @@ async def suppression(itemId):
     try:
         # Utilisation de la méthode delete du client pour supprimer l'élément
         client.delete(itemId)
-        return("Suppression de l'image " + itemId + " réussie")
+        return f"Suppression de l'image {itemId} réussie"
 
     except Exception as e:
         # Capturez les exceptions spécifiques dont vous avez besoin (ajoutez des exceptions selon vos besoins)
-        raise HTTPException(status_code=500, detail="Une erreur s'est produite lors de la suppression de l'image " + itemId)
+        raise HTTPException(status_code=500, detail=f"Une erreur s'est produite lors de la suppression de l'image {itemId}")
