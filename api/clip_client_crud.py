@@ -1,36 +1,10 @@
 from clip_client import Client
 from docarray import DocumentArray
 from typing import overload, Callable, Optional, Dict, Iterable, Union
-from annlite.executor import AnnLiteIndexer
 
 class ClientCrud(Client):
     def __init__(self, server: str, credential: dict = {}, **kwargs):
         super().__init__(server, credential, **kwargs)
-
-    @overload
-    def delete(
-        self,
-        content: Union['DocumentArray', Iterable['Document']],
-        *,
-        batch_size: Optional[int] = None,
-        show_progress: bool = False,
-        parameters: Optional[Dict] = None,
-        on_done: Optional[Callable[['DataRequest'], None]] = None,
-        on_error: Optional[Callable[['DataRequest'], None]] = None,
-        on_always: Optional[Callable[['DataRequest'], None]] = None,
-        prefetch: int = 100,
-    ) -> 'DocumentArray':
-        """Delete content.
-        :param content: an iterable of content (IDs or other identifiers) to be deleted.
-        :param batch_size: the number of elements in each request when sending content.
-        :param show_progress: if set, show a progress bar
-        :param parameters: additional parameters for the delete operation.
-        :param on_done: the callback function executed after successful completion of the delete operation.
-        :param on_error: the callback function executed if an error occurs during the delete operation.
-        :param on_always: the callback function executed after each delete operation is completed.
-        :param prefetch: the number of in-flight batches made by the post() method.
-        :return: the result of the delete operation in a DocumentArray.
-        """
 
     def delete(
         self,
