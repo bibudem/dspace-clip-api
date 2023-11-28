@@ -1,5 +1,5 @@
 # Importations de modules
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query, HTTPException, Path
 from pydantic import BaseModel
 from clip_client_crud import ClientCrud
 from docarray import Document
@@ -136,13 +136,16 @@ def search_object(results, content):
 
 # Ajout d'une image
 @app.post("/{id}")
-async def indexation(image: Image):
+async def indexation(
+      image: Image,
+      id: str = Path(..., description="ID de l'image")):
     try:
         if not image.url:
             raise HTTPException(status_code=400, detail="Veuillez fournir un URL.")
 
         # Création d'un document avec les balises associées
-        document = Document(uri=image.url, id=image.itemId)
+        id = str(id) if id else ''
+        document = Document(uri=image.url, id=id)
         document.tags['collectionId'] = str(image.collectionId) if image.collectionId else ''
         document.tags['itemId'] = str(image.itemId) if image.itemId else ''
         document.tags['uuid'] = str(image.uuid) if image.uuid else ''
@@ -157,27 +160,31 @@ async def indexation(image: Image):
     except Exception as e:
         raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
 
+
 # Suppression d'une image
-@app.delete("/{itemId}")
-async def suppression(itemId):
+@app.delete("/{id}")
+async def suppression(id):
     try:
         # Utilisation de la méthode delete du client pour supprimer l'élément
-        client.delete(itemId)
-        return f"Suppression de l'image {itemId} réussie"
+        client.delete(id)
+        return f"Suppression de l'image {id} réussie"
 
     except Exception as e:
         # Capturez les exceptions spécifiques dont vous avez besoin (ajoutez des exceptions selon vos besoins)
         raise HTTPException(status_code=500, detail=f"Une erreur s'est produite lors de la suppression de l'image {itemId}")
 
 # Mise à jour d'une image
-@app.put("/update")
-async def update(image: Image):
+@app.put("/{id}")
+async def update(
+          image: Image,
+          id: str = Path(..., description="ID de l'image")):
     try:
         if not image.url:
             raise HTTPException(status_code=400, detail="Veuillez fournir un URL.")
 
         # Création d'un document avec les balises associées
-        document = Document(uri=image.url, id=image.itemId)
+        idImage = id if id else ''
+        document = Document(uri=image.url, id=idImage)
         document.tags['collectionId'] = str(image.collectionId) if image.collectionId else ''
         document.tags['itemId'] = str(image.itemId) if image.itemId else ''
         document.tags['uuid'] = str(image.uuid) if image.uuid else ''
