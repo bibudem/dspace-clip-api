@@ -168,3 +168,27 @@ async def suppression(itemId):
     except Exception as e:
         # Capturez les exceptions spécifiques dont vous avez besoin (ajoutez des exceptions selon vos besoins)
         raise HTTPException(status_code=500, detail=f"Une erreur s'est produite lors de la suppression de l'image {itemId}")
+
+# Mise à jour d'une image
+@app.put("/update")
+async def update(image: Image):
+    try:
+        if not image.url:
+            raise HTTPException(status_code=400, detail="Veuillez fournir un URL.")
+
+        # Création d'un document avec les balises associées
+        document = Document(uri=image.url, id=image.itemId)
+        document.tags['collectionId'] = str(image.collectionId) if image.collectionId else ''
+        document.tags['itemId'] = str(image.itemId) if image.itemId else ''
+        document.tags['uuid'] = str(image.uuid) if image.uuid else ''
+        document.tags['itemHandle'] = str(image.itemHandle) if image.itemHandle else ''
+        document.tags['itemName'] = str(image.itemName) if image.itemName else ''
+
+        # Mise à jour du document
+        client.update([document])
+
+        return {"Mise à jour": "réalisée", "url": image.itemId}
+
+    except Exception as e:
+        logger.debug(f"An unexpected error occurred: {e}")
+        raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
