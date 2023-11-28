@@ -3,7 +3,7 @@
 
 # API d'Indexation et Recherche d'Images
 
-Cette API permet l'indexation l'indexation, la recherche, la mise à jour et la suppression d'images à l'aide du modèle CLIP.
+Cette API permet l'indexation, la recherche, la mise à jour et la suppression d'images à l'aide du modèle CLIP.
 
 ## Démarrage de l'API FastAPI
 
