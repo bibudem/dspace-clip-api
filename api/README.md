@@ -3,7 +3,7 @@
 
 # API d'Indexation et Recherche d'Images
 
-Cette API permet l'indexation, la recherche, la mise à jour et la suppression d'images à l'aide du modèle CLIP.
+Cette API permet l'indexation l'indexation, la recherche, la mise à jour et la suppression d'images à l'aide du modèle CLIP.
 
 ## Démarrage de l'API FastAPI
 
@@ -56,13 +56,13 @@ L'indexation est effectuée en extrayant les informations pertinentes de l'URL d
 Exemple d'appel CURL :
 
 ```bash
-curl -X POST -H "Content-Type: application/json" -d "{\"itemId\": \"0505\",\"uuid\": \"10505\", \"itemHandle\": \"12345/0505\", \"itemName\": \"Raiatea depuis un motu\", \"collectionId\": \"exemples\", \"url\": \"../utils/img/IMG_0505.jpeg\"}" http://localhost:8000/0505
+curl -X POST -H "Content-Type: application/json" -d "{\"itemId\": \"0505\",\"uuid\": \"0505\", \"itemHandle\": \"12345/0505\", \"itemName\": \"Raiatea depuis un motu\", \"collectionId\": \"exemples\", \"url\": \"votre-repertoire/utils/img/IMG_0505.jpeg\"}" http://localhost:8000/10505
 
-curl -X POST -H "Content-Type: application/json" -d "{\"itemId\": \"0734\",\"uuid\": \"10734\", \"itemHandle\": \"12345/0734\", \"itemName\": \"Raiatea depuis un motu\", \"collectionId\": \"exemples\", \"url\": \"../utils/img/IMG_0734.jpeg\"}" http://localhost:8000/0734
+curl -X POST -H "Content-Type: application/json" -d "{\"itemId\": \"0734\",\"uuid\": \"0734\", \"itemHandle\": \"12345/0734\", \"itemName\": \"Raiatea depuis un motu\", \"collectionId\": \"exemples\", \"url\": \"votre-repertoire/utils/img/IMG_0734.jpeg\"}" http://localhost:8000/10734
 
-curl -X POST -H "Content-Type: application/json" -d "{\"itemId\": \"0777\",\"uuid\": \"10777\", \"itemHandle\": \"12345/0777\", \"itemName\": \"Raiatea depuis un motu\", \"collectionId\": \"exemples2\", \"url\": \"../utils/img/IMG_0777.jpeg\"}" http://localhost:8000/0777
+curl -X POST -H "Content-Type: application/json" -d "{\"itemId\": \"0777\",\"uuid\": \"0777\", \"itemHandle\": \"12345/0777\", \"itemName\": \"Raiatea depuis un motu\", \"collectionId\": \"exemples2\", \"url\": \"votre-repertoire/utils/img/IMG_0777.jpeg\"}" http://localhost:8000/10777
 
-curl -X POST -H "Content-Type: application/json" -d "{\"itemId\": \"2015\",\"uuid\": \"12015\", \"itemHandle\": \"12345/2015\", \"itemName\": \"Raiatea depuis un motu\", \"collectionId\": \"exemples2\", \"url\": \"../utils/img/IMG_2015.jpeg\"}" http://localhost:8000/2015
+curl -X POST -H "Content-Type: application/json" -d "{\"itemId\": \"2015\",\"uuid\": \"2015\", \"itemHandle\": \"12345/2015\", \"itemName\": \"Raiatea depuis un motu\", \"collectionId\": \"exemples2\", \"url\": \"votre-repertoire/utils/img/IMG_2015.jpeg\"}" http://localhost:8000/12015
 ```
 
 ### Recherche d'Images
@@ -86,7 +86,7 @@ curl -X GET "http://localhost:8000/search?query=paysage&size=5" -H "accept: appl
 ```
 ### Suppression
 
-####Endpoint: `DELETE /{itemId}`
+#### Endpoint: `DELETE /{itemId}`
 Cette route vous permet de supprimer une index d'une image en spécifiant l'itemId dans l'URL.
 
 Exemple d'appel CURL :
@@ -94,13 +94,13 @@ Exemple d'appel CURL :
 ```bash
 curl -X DELETE "http://localhost:8000/votre_item_id" -H "accept: application/json"
 ```
-###Mise à jour
-####Endpoint: `PUT /update`
+### Mise à jour
+#### Endpoint: `PUT /update`
 Cette route vous permet de mettre à jour un index d'une image en fournissant les informations mises à jour à l'aide du modèle Image.
 
 Exemple d'appel CURL :
 ```bash
-curl -X PUT "http://localhost:8000/update" -H "accept: application/json" -H "Content-Type: application/json" -d '{"itemId": "votre_item_id", "uuid": "votre_uuid", "itemHandle": "votre_handle", "itemName": "votre_nom", "collectionId": "votre_collection_id", "url": "votre_url_mise_a_jour"}'
+curl -X PUT -H "Content-Type: application/json" -d "{\"itemId\": \"0777\",\"uuid\": \"0777\", \"itemHandle\": \"12345/0777\", \"itemName\": \"test2222\", \"collectionId\": \"ex-test2222\", \"url\": \"votre-repertoire/utils/img/IMG_0777.jpeg\"}" http://localhost:8000/10777
 ```
 
 
