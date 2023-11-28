@@ -86,7 +86,7 @@ curl -X GET "http://localhost:8000/search?query=paysage&size=5" -H "accept: appl
 ```
 ### Suppression
 
-####Endpoint: `DELETE /{itemId}`
+#### Endpoint: `DELETE /{itemId}`
 Cette route vous permet de supprimer une index d'une image en spécifiant l'itemId dans l'URL.
 
 Exemple d'appel CURL :
@@ -94,8 +94,8 @@ Exemple d'appel CURL :
 ```bash
 curl -X DELETE "http://localhost:8000/votre_item_id" -H "accept: application/json"
 ```
-###Mise à jour
-####Endpoint: `PUT /update`
+### Mise à jour
+#### Endpoint: `PUT /update`
 Cette route vous permet de mettre à jour un index d'une image en fournissant les informations mises à jour à l'aide du modèle Image.
 
 Exemple d'appel CURL :
