@@ -3,7 +3,7 @@
 
 # API d'Indexation et Recherche d'Images
 
-Cette API permet l'indexation et la recherche d'images à l'aide du serveur CLIP.
+Cette API permet l'indexation l'indexation, la recherche, la mise à jour et la suppression d'images à l'aide du modèle CLIP.
 
 ## Démarrage de l'API FastAPI
 
@@ -15,18 +15,18 @@ Cette API permet l'indexation et la recherche d'images à l'aide du serveur CLIP
    - Assurez-vous d'être dans le répertoire de l'application où se trouve le fichier `app.py`.
    - Exécutez la commande suivante dans votre terminal : `uvicorn app:app --reload`
 
-    L'option `--reload` permet un rechargement automatique de l'API lors de la modification du code. Veillez à laisser le terminal ouvert pendant l'utilisation de l'API.
+   L'option `--reload` permet un rechargement automatique de l'API lors de la modification du code. Veillez à laisser le terminal ouvert pendant l'utilisation de l'API.
 
 ## Accès à l'API
 
 Une fois l'API démarrée, vous avez deux options pour accéder à la documentation interactive et explorer les fonctionnalités :
 
 1. **Swagger - Interface Interactive :**
-    - Ouvrez votre navigateur et visitez l'URL [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+   - Ouvrez votre navigateur et visitez l'URL [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 
 2. **ReDoc - Documentation Visuelle :**
-    - Accédez à l'interface ReDoc en visitant l'URL [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc).
-    
+   - Accédez à l'interface ReDoc en visitant l'URL [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc).
+
 ## Utilisation de l'API
 
 Une fois l'API démarrée, vous pouvez utiliser les points de terminaison définis dans votre application FastAPI, tels que `/search` et `/index`. Consultez la section "Fonctionnalités" dans le fichier README pour des exemples d'appels CURL.
@@ -56,15 +56,13 @@ L'indexation est effectuée en extrayant les informations pertinentes de l'URL d
 Exemple d'appel CURL :
 
 ```bash
-curl -X POST "http://localhost:8000/1001?collectionId=_plage&uuid=1001&name=Paysage%20ensoleill%C3%A9%20sur%20la%20plage&url=../utils/img/IMG_0505.jpeg" -H 'accept: application/json'
+curl -X POST -H "Content-Type: application/json" -d "{\"itemId\": \"0505\",\"uuid\": \"10505\", \"itemHandle\": \"12345/0505\", \"itemName\": \"Raiatea depuis un motu\", \"collectionId\": \"exemples\", \"url\": \"../utils/img/IMG_0505.jpeg\"}" http://localhost:8000/0505
 
-curl -X POST "http://localhost:8000/1002?collectionId=_plage&uuid=1002&name=Coquillages%20et%20coquillages%20sur%20le%20sable&url=../utils/img/IMG_0734.jpeg" -H 'accept: application/json'
+curl -X POST -H "Content-Type: application/json" -d "{\"itemId\": \"0734\",\"uuid\": \"10734\", \"itemHandle\": \"12345/0734\", \"itemName\": \"Raiatea depuis un motu\", \"collectionId\": \"exemples\", \"url\": \"../utils/img/IMG_0734.jpeg\"}" http://localhost:8000/0734
 
-curl -X POST "http://localhost:8000/1003?collectionId=_plage&uuid=1003&name=Surf%20sous%20les%20vagues%20de%20l%27Atlantique&url=../utils/img/IMG_0777.jpeg" -H 'accept: application/json'
+curl -X POST -H "Content-Type: application/json" -d "{\"itemId\": \"0777\",\"uuid\": \"10777\", \"itemHandle\": \"12345/0777\", \"itemName\": \"Raiatea depuis un motu\", \"collectionId\": \"exemples2\", \"url\": \"../utils/img/IMG_0777.jpeg\"}" http://localhost:8000/0777
 
-curl -X POST "http://localhost:8000/1004?collectionId=_soleil&uuid=1004&name=Coucher%20de%20soleil%20sur%20l%27oc%C3%A9an&url=../utils/img/IMG_0963.jpeg" -H 'accept: application/json'
-
-curl -X POST "http://localhost:8000/1005?collectionId=_soleil&uuid=1005&name=Famille%20construisant%20un%20ch%C3%A2teau%20de%20sable&handle=_handle_exemple&url=../utils/img/IMG_1682.jpeg" -H 'accept: application/json'
+curl -X POST -H "Content-Type: application/json" -d "{\"itemId\": \"2015\",\"uuid\": \"12015\", \"itemHandle\": \"12345/2015\", \"itemName\": \"Raiatea depuis un motu\", \"collectionId\": \"exemples2\", \"url\": \"../utils/img/IMG_2015.jpeg\"}" http://localhost:8000/2015
 ```
 
 ### Recherche d'Images
@@ -86,6 +84,25 @@ Exemple d'appel CURL :
 curl -X GET "http://localhost:8000/search?query=paysage&size=5" -H "accept: application/json"
 
 ```
+### Suppression
+
+####Endpoint: `DELETE /{itemId}`
+Cette route vous permet de supprimer une index d'une image en spécifiant l'itemId dans l'URL.
+
+Exemple d'appel CURL :
+
+```bash
+curl -X DELETE "http://localhost:8000/votre_item_id" -H "accept: application/json"
+```
+###Mise à jour
+####Endpoint: `PUT /update`
+Cette route vous permet de mettre à jour un index d'une image en fournissant les informations mises à jour à l'aide du modèle Image.
+
+Exemple d'appel CURL :
+```bash
+curl -X PUT "http://localhost:8000/update" -H "accept: application/json" -H "Content-Type: application/json" -d '{"itemId": "votre_item_id", "uuid": "votre_uuid", "itemHandle": "votre_handle", "itemName": "votre_nom", "collectionId": "votre_collection_id", "url": "votre_url_mise_a_jour"}'
+```
+
 
 ## Configuration
 
