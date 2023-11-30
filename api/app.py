@@ -7,6 +7,11 @@ from grpc_health.v1 import health_pb2, health_pb2_grpc
 import os
 import json
 import grpc
+import logging
+
+# Ajoutez ces lignes au début de votre script pour configurer le niveau de journalisation
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # Une classe pour représenter une image à indexer
 class Image(BaseModel):
