@@ -7,11 +7,6 @@ from grpc_health.v1 import health_pb2, health_pb2_grpc
 import os
 import json
 import grpc
-import logging
-
-# Ajoutez ces lignes au début de votre script pour configurer le niveau de journalisation
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 # Une classe pour représenter une image à indexer
 class Image(BaseModel):
@@ -141,13 +136,14 @@ def search_object(results, content):
 
 # Ajout d'une image
 @app.post("/{idImage}")
-async def indexation(image: Image):
+async def indexation(
+      image: Image,
+      idImage: str):
     try:
         if not image.url:
             raise HTTPException(status_code=400, detail="Veuillez fournir un URL.")
 
         # Création d'un document avec les balises associées
-        id = str(id) if id else ''
         document = Document(uri=image.url, id=idImage)
         document.tags['collectionId'] = str(image.collectionId) if image.collectionId else ''
         document.tags['itemId'] = str(image.itemId) if image.itemId else ''
@@ -178,10 +174,12 @@ async def suppression(idImage):
 
 # Mise à jour d'une image
 @app.put("/{idImage}")
-async def update(image: Image):
+async def update(
+          idImage: str,
+          image: Image):
     try:
         if not image.url:
-            raise HTTPException(status_code=400, detail="Veuillez fournir un URL.")
+            raise HTTPException(status_code=400, detail="Veuillez fournir une URL.")
 
         # Création d'un document avec les balises associées
         document = Document(uri=image.url, id=idImage)
@@ -194,8 +192,7 @@ async def update(image: Image):
         # Mise à jour du document
         client.update([document])
 
-        return {"Mise à jour": "réalisée", "url": image.url}
+        return {"Mise à jour": "réalisée", "url": image.itemId}
 
     except Exception as e:
-        logger.debug(f"An unexpected error occurred: {e}")
         raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
