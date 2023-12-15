@@ -1,4 +1,5 @@
 # Importations de modules
+import base64
 from fastapi import FastAPI, Query, HTTPException
 from pydantic import BaseModel
 from clip_client_crud import ClientCrud
@@ -16,6 +17,7 @@ class Image(BaseModel):
     itemName: str
     collectionId: str
     url: str
+    content: str
 
 # Initialisation de FastAPI
 app = FastAPI()
@@ -134,17 +136,20 @@ def search_object(results, content):
     except Exception as e:
         raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
 
-# Ajout d'une image
+# Ajout d'une image par son contenu ou son URL
 @app.post("/{idImage}")
 async def indexation(
       image: Image,
       idImage: str):
-    try:
-        if not image.url:
-            raise HTTPException(status_code=400, detail="Veuillez fournir un URL.")
 
-        # Création d'un document avec les balises associées
-        document = Document(uri=image.url, id=idImage)
+        # On a toujours un ID
+        document = Document(id=idImage)
+
+        # Si on a du contenu on l'utilise, sinon l'URL
+        if image.content: document.blob = image.content
+        else: document.uri = image.url
+
+        # Les différentes propriétés
         document.tags['collectionId'] = str(image.collectionId) if image.collectionId else ''
         document.tags['itemId'] = str(image.itemId) if image.itemId else ''
         document.tags['uuid'] = str(image.uuid) if image.uuid else ''
@@ -154,10 +159,7 @@ async def indexation(
         # Indexation du document
         client.index([document])
 
-        return {"indexation": "réalisée", "url": image.url}
-
-    except Exception as e:
-        raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
+        return {"Ajout d'une image ": image.id}
 
 
 # Suppression d'une image
@@ -181,8 +183,14 @@ async def update(
         if not image.url:
             raise HTTPException(status_code=400, detail="Veuillez fournir une URL.")
 
+        # On a toujours un ID
+        document = Document(id=idImage)
+
+        # Si on a du contenu on l'utilise, sinon l'URL
+        if image.content: document.blob = image.content
+        else: document.uri = image.url
+
         # Création d'un document avec les balises associées
-        document = Document(uri=image.url, id=idImage)
         document.tags['collectionId'] = str(image.collectionId) if image.collectionId else ''
         document.tags['itemId'] = str(image.itemId) if image.itemId else ''
         document.tags['uuid'] = str(image.uuid) if image.uuid else ''
