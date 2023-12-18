@@ -8,6 +8,7 @@ from grpc_health.v1 import health_pb2, health_pb2_grpc
 import os
 import json
 import grpc
+import logging
 
 # Une classe pour représenter une image à indexer
 class Image(BaseModel):
@@ -16,8 +17,8 @@ class Image(BaseModel):
     itemHandle: str
     itemName: str
     collectionId: str
-    url: str
-    content: str
+    url: str | None = None
+    content: str | None = None
 
 # Initialisation de FastAPI
 app = FastAPI()
@@ -30,6 +31,9 @@ with open('config/config.json') as config_file:
 client = ClientCrud(config['clip_server'])
 limit = config['limit']
 grpc_server = config['grpc_server']
+
+# Initialisation du logger
+logger = logging.getLogger(__name__)
 
 # Fonction pour vérifier l'état du serveur gRPC
 def check_grpc_server_status(server_address):
@@ -141,12 +145,12 @@ def search_object(results, content):
 async def indexation(
       image: Image,
       idImage: str):
-
-        # On a toujours un ID
+        
+        # On a toujours un ID (dans le Path du POST)
         document = Document(id=idImage)
 
         # Si on a du contenu on l'utilise, sinon l'URL
-        if image.content: document.blob = image.content
+        if image.content: document.blob = base64.b64decode(image.content)
         else: document.uri = image.url
 
         # Les différentes propriétés
@@ -159,29 +163,21 @@ async def indexation(
         # Indexation du document
         client.index([document])
 
-        return {"Ajout d'une image ": image.id}
+        return {"Ajout d'une image": image.uuid}
 
 
 # Suppression d'une image
 @app.delete("/{idImage}")
 async def suppression(idImage):
-    try:
-        # Utilisation de la méthode delete du client pour supprimer l'élément
-        client.delete(idImage)
-        return f"Suppression de l'image {idImage} réussie"
-
-    except Exception as e:
-        # Capturez les exceptions spécifiques dont vous avez besoin (ajoutez des exceptions selon vos besoins)
-        raise HTTPException(status_code=500, detail=f"Une erreur s'est produite lors de la suppression de l'image {idImage}")
+    # Utilisation de la méthode delete du client pour supprimer l'élément
+    client.delete(idImage)
+    return {"Suppression d'une image": idImage}
 
 # Mise à jour d'une image
 @app.put("/{idImage}")
 async def update(
           idImage: str,
           image: Image):
-    try:
-        if not image.url:
-            raise HTTPException(status_code=400, detail="Veuillez fournir une URL.")
 
         # On a toujours un ID
         document = Document(id=idImage)
@@ -200,7 +196,4 @@ async def update(
         # Mise à jour du document
         client.update([document])
 
-        return {"Mise à jour": "réalisée", "url": image.itemId}
-
-    except Exception as e:
-        raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
+        return {"Mise à jour d'une image": image.uuid}
