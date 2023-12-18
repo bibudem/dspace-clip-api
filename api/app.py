@@ -1,4 +1,5 @@
 # Importations de modules
+import base64
 from fastapi import FastAPI, Query, HTTPException
 from pydantic import BaseModel
 from clip_client_crud import ClientCrud
@@ -9,10 +10,6 @@ import json
 import grpc
 import logging
 
-# Ajoutez ces lignes au début de votre script pour configurer le niveau de journalisation
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-
 # Une classe pour représenter une image à indexer
 class Image(BaseModel):
     itemId: str
@@ -20,7 +17,8 @@ class Image(BaseModel):
     itemHandle: str
     itemName: str
     collectionId: str
-    url: str
+    url: str | None = None
+    content: str | None = None
 
 # Initialisation de FastAPI
 app = FastAPI()
@@ -33,6 +31,9 @@ with open('config/config.json') as config_file:
 client = ClientCrud(config['clip_server'])
 limit = config['limit']
 grpc_server = config['grpc_server']
+
+# Initialisation du logger
+logger = logging.getLogger(__name__)
 
 # Fonction pour vérifier l'état du serveur gRPC
 def check_grpc_server_status(server_address):
@@ -139,16 +140,20 @@ def search_object(results, content):
     except Exception as e:
         raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
 
-# Ajout d'une image
+# Ajout d'une image par son contenu ou son URL
 @app.post("/{idImage}")
-async def indexation(image: Image):
-    try:
-        if not image.url:
-            raise HTTPException(status_code=400, detail="Veuillez fournir un URL.")
+async def indexation(
+      image: Image,
+      idImage: str):
+        
+        # On a toujours un ID (dans le Path du POST)
+        document = Document(id=idImage)
 
-        # Création d'un document avec les balises associées
-        id = str(id) if id else ''
-        document = Document(uri=image.url, id=idImage)
+        # Si on a du contenu on l'utilise, sinon l'URL
+        if image.content: document.blob = base64.b64decode(image.content)
+        else: document.uri = image.url
+
+        # Les différentes propriétés
         document.tags['collectionId'] = str(image.collectionId) if image.collectionId else ''
         document.tags['itemId'] = str(image.itemId) if image.itemId else ''
         document.tags['uuid'] = str(image.uuid) if image.uuid else ''
@@ -158,33 +163,30 @@ async def indexation(image: Image):
         # Indexation du document
         client.index([document])
 
-        return {"indexation": "réalisée", "url": image.url}
-
-    except Exception as e:
-        raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
+        return {"Ajout d'une image": image.uuid}
 
 
 # Suppression d'une image
 @app.delete("/{idImage}")
 async def suppression(idImage):
-    try:
-        # Utilisation de la méthode delete du client pour supprimer l'élément
-        client.delete(idImage)
-        return f"Suppression de l'image {idImage} réussie"
-
-    except Exception as e:
-        # Capturez les exceptions spécifiques dont vous avez besoin (ajoutez des exceptions selon vos besoins)
-        raise HTTPException(status_code=500, detail=f"Une erreur s'est produite lors de la suppression de l'image {idImage}")
+    # Utilisation de la méthode delete du client pour supprimer l'élément
+    client.delete(idImage)
+    return {"Suppression d'une image": idImage}
 
 # Mise à jour d'une image
 @app.put("/{idImage}")
-async def update(image: Image):
-    try:
-        if not image.url:
-            raise HTTPException(status_code=400, detail="Veuillez fournir un URL.")
+async def update(
+          idImage: str,
+          image: Image):
+
+        # On a toujours un ID
+        document = Document(id=idImage)
+
+        # Si on a du contenu on l'utilise, sinon l'URL
+        if image.content: document.blob = image.content
+        else: document.uri = image.url
 
         # Création d'un document avec les balises associées
-        document = Document(uri=image.url, id=idImage)
         document.tags['collectionId'] = str(image.collectionId) if image.collectionId else ''
         document.tags['itemId'] = str(image.itemId) if image.itemId else ''
         document.tags['uuid'] = str(image.uuid) if image.uuid else ''
@@ -194,8 +196,4 @@ async def update(image: Image):
         # Mise à jour du document
         client.update([document])
 
-        return {"Mise à jour": "réalisée", "url": image.url}
-
-    except Exception as e:
-        logger.debug(f"An unexpected error occurred: {e}")
-        raise HTTPException(status_code=400, detail="Une erreur inattendue s'est produite. Veuillez réessayer.")
+        return {"Mise à jour d'une image": image.uuid}
